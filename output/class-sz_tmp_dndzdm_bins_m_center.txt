@@ -1,0 +1,4 @@
+# Column 1: ln(M/(Msun/h)) at the center of the mass bin.
+# Column 2: M [Msun/h]
+# Note that we use logarithmic binning between M_min = 5.6323e-322 Msun/h and M_max = 5.0928e-313 Msun/h.
+

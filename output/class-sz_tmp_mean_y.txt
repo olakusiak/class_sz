@@ -1,0 +1,6 @@
+#Input mass bias b = 0.000000e+00
+#sigma8 = 0.000000e+00
+#Omega_m = 3.189296e-01
+#h = 6.711000e-01
+#Average Compton y parameter
+1.972918e-06
