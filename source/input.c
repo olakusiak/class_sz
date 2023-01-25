@@ -3530,6 +3530,7 @@ int input_read_parameters(
       class_read_double("nfw_profile_epsabs",ptsz->nfw_profile_epsabs);
 
       class_read_double("M_min_HOD",ptsz->M_min_HOD);
+      class_read_double("M_min_HOD_cib",ptsz->M_min_HOD_cib);
       // gal1 x gal2
       class_read_double("M_min_HOD_gal1",ptsz->M_min_HOD_gal1);
       class_read_double("M_min_HOD_gal2",ptsz->M_min_HOD_gal2);
@@ -6167,8 +6168,8 @@ int input_default_params(
   // ptsz->n_z_L_sat = 101;
   // ptsz->n_m_L_sat = 102;
   // ptsz->n_nu_L_sat = 103;
-  // ptsz->epsabs_L_sat = 1e-15;
-  // ptsz->epsrel_L_sat = 1e-6;
+  ptsz->epsabs_L_sat = 1e-15;
+  ptsz->epsrel_L_sat = 1e-6;
 
   ptsz->convert_cls_to_gamma = 0;
 
@@ -6279,7 +6280,7 @@ int input_default_params(
   ptsz->M_min_subhalo_in_Msun = 0;
   ptsz->use_redshift_dependent_M_min = 0;
   ptsz->use_nc_1_for_all_halos_cib_HOD = 0;
-
+  ptsz->M_min_HOD_cib = pow(10.,11.);
   ptsz->fNL = 0.;
 
   //# Table 1 of https://arxiv.org/pdf/1309.0382.pdf

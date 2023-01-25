@@ -1287,7 +1287,7 @@ struct tszspectrum {
   //
   // double M1SZ_L_sat;
   // double M2SZ_L_sat;
-  //
+
   // double epsabs_L_sat;
   // double epsrel_L_sat;
 
@@ -1512,6 +1512,7 @@ double * steps_m;
   double z_obs_cib;
   double z_plateau_cib;
   double M_min_subhalo_in_Msun;
+  double M_min_HOD_cib;
   int use_nc_1_for_all_halos_cib_HOD;
   int use_redshift_dependent_M_min;
 

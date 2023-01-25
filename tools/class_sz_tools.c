@@ -17950,7 +17950,7 @@ for (index_nu=0; index_nu<ptsz->n_nu_L_sat; index_nu++)
       lnMs_min = log(ptsz->M_min_subhalo_in_Msun);
       }
       else{
-      lnMs_min = log(ptsz->M_min_HOD);
+      lnMs_min = log(ptsz->M_min_HOD_cib);
       }
       double lnMs_max = logM;//log(1e11);
 
@@ -18136,7 +18136,7 @@ for (index_M=0; index_M<ptsz->n_m_L_sat; index_M++)
       double z =   exp(ptsz->array_z_L_sat[index_z])-1.;
       double logM =   ptsz->array_m_L_sat[index_M];
 
-      double lnMs_min = log(ptsz->M_min_HOD);
+      double lnMs_min = log(ptsz->M_min_HOD_cib);
       double lnMs_max = logM;//log(1e11);
 
       double epsrel = ptsz->epsrel_L_sat;

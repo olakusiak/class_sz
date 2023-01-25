@@ -1,8 +1,16 @@
+.DS_Store
 README
-autosetup.py
+cclassy.pxd
+classy.c
+classy.pyx
+extract_errors.py
+interface_generator.py
 setup.py
+sshproxy.sh
+test_class.py
 /Users/aleksandra/software/class_sz/python/../python/classy.pyx
 classy_sz.egg-info/PKG-INFO
 classy_sz.egg-info/SOURCES.txt
 classy_sz.egg-info/dependency_links.txt
 classy_sz.egg-info/top_level.txt
+dist/classy_sz-2.9.4-py3.9-macosx-10.9-x86_64.egg
