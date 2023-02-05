@@ -13098,18 +13098,18 @@ printf("ell = %e\t\t cl_y_kappa (2h) = %e \n",ptsz->ell[index_l],ptsz->cl_tSZ_le
 }
 }
 
-if (ptsz->has_gal_cib_1h){
-printf("\n\n");
-printf("########################################\n");
-printf("CIB x galaxy power spectrum 1-halo term (new):\n");
-printf("########################################\n");
-printf("\n");
-int index_l;
-for (index_l=0;index_l<ptsz->nlSZ;index_l++){
-
-printf("ell = %e\t\t cl_gal_cib (1h) = %e \n",ptsz->ell[index_l],ptsz->cl_gal_cib_1h[index_l]);
-}
-}
+// if (ptsz->has_gal_cib_1h){
+// printf("\n\n");
+// printf("########################################\n");
+// printf("CIB x galaxy power spectrum 1-halo term (new):\n");
+// printf("########################################\n");
+// printf("\n");
+// int index_l;
+// for (index_l=0;index_l<ptsz->nlSZ;index_l++){
+//
+// printf("ell = %e\t\t cl_gal_cib (1h) = %e \n",ptsz->ell[index_l],ptsz->cl_gal_cib_1h[index_l]);
+// }
+// }
 if (ptsz->has_gal_cib_2h){
 printf("\n\n");
 printf("########################################\n");
@@ -13117,9 +13117,10 @@ printf("CIB x galaxy power spectrum 2-halo term (new):\n");
 printf("########################################\n");
 printf("\n");
 int index_l;
+int index_nu;
 for (index_l=0;index_l<ptsz->nlSZ;index_l++){
 
-printf("ell = %e\t\t cl_gal_cib (2h) = %e \n",ptsz->ell[index_l],ptsz->cl_gal_cib_2h[index_l]);
+printf("ell = %e\t\t cl_gal_cib (2h) = %e \n",ptsz->ell[index_l],ptsz->cl_gal_cib_2h[index_nu][index_l]);
 }
 }
 
@@ -13742,13 +13743,24 @@ printf("########################################\n");
 printf("tSZ x cib power spectrum 1-halo term:\n");
 printf("########################################\n");
 printf("\n");
+// int index_l;
+// int index_nu;
+// for (index_nu=0;index_nu<ptsz->cib_frequency_list_num;index_nu++){
+// for (index_l=0;index_l<ptsz->nlSZ;index_l++){
+//
+// printf("ell = %e\t\t cl_y_cib (1h) = %e \n",ptsz->ell[index_l],ptsz->cl_tSZ_cib_1h[index_l]);
+// }
+// }
 int index_l;
 int index_nu;
+// int index_nu_prime;
 for (index_nu=0;index_nu<ptsz->cib_frequency_list_num;index_nu++){
+    // for (index_nu_prime=0;index_nu_prime<ptsz->cib_frequency_list_num;index_nu_prime++){
 for (index_l=0;index_l<ptsz->nlSZ;index_l++){
 
-printf("ell = %e\t\t cl_y_cib (1h) = %e \n",ptsz->ell[index_l],ptsz->cl_tSZ_cib_1h[index_l]);
+printf("ell = %e\t\t cl_y_cib (1h) = %e \n",ptsz->ell[index_l],ptsz->cl_tSZ_cib_1h[index_nu][index_l]);
 }
+// }
 }
 }
 
@@ -13763,26 +13775,26 @@ int index_nu;
 for (index_nu=0;index_nu<ptsz->cib_frequency_list_num;index_nu++){
 for (index_l=0;index_l<ptsz->nlSZ;index_l++){
 
-printf("ell = %e\t\t cl_y_cib (2h) = %e \n",ptsz->ell[index_l],ptsz->cl_tSZ_cib_2h[index_l]);
+printf("ell = %e\t\t cl_y_cib (2h) = %e \n",ptsz->ell[index_l],ptsz->cl_tSZ_cib_2h[index_nu][index_l]);
 }
 }
 }
 
-// if (ptsz->has_gal_cib_1h){
-// printf("\n\n");
-// printf("########################################\n");
-// printf("CIB x galaxy power spectrum 1-halo term (TEST):\n");
-// printf("########################################\n");
-// printf("\n");
-// int index_l;
-// int index_nu;
-// for (index_nu=0;index_nu<ptsz->cib_frequency_list_num;index_nu++){
-//     for (index_l=0;index_l<ptsz->nlSZ;index_l++){
-//
-// printf("ell = %e\t\t cl_gal_cib (1h) = %e \n",ptsz->ell[index_l],ptsz->cl_gal_cib_1h[index_l]);
-// }
-// }
-// }
+if (ptsz->has_gal_cib_1h){
+printf("\n\n");
+printf("########################################\n");
+printf("CIB x galaxy power spectrum 1-halo term (TEST):\n");
+printf("########################################\n");
+printf("\n");
+int index_l;
+int index_nu;
+for (index_nu=0;index_nu<ptsz->cib_frequency_list_num;index_nu++){
+    for (index_l=0;index_l<ptsz->nlSZ;index_l++){
+
+printf("ell = %e\t\t cl_gal_cib (1h) = %e \n",ptsz->ell[index_l],ptsz->cl_gal_cib_1h[index_nu][index_l]);
+}
+}
+}
 
 if (ptsz->has_cib_monopole){
 printf("\n\n");

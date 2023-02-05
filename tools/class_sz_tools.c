@@ -10057,6 +10057,7 @@ double integrand_patterson_test(double logM, void *p){
   double epsabs=ptsz->mass_epsabs;
 
   double m_min;
+  double m_min2;
   double m_max;
 
   if ( ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cov_Y_N )
@@ -10074,7 +10075,23 @@ double integrand_patterson_test(double logM, void *p){
 
     if (ptsz->use_redshift_dependent_M_min){
       m_min = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
-      // printf("z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+      // printf(" = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+
+    }
+    if (ptsz->has_second_M_min){
+      //printf(" = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],get_M_min_of_z(pvectsz[ptsz->index_z],ptsz));
+      //printf(" second m_min = %.3e \n",ptsz->M1SZ_2nd);
+
+      m_min2 = ptsz->M1SZ_2nd;
+
+      if (ptsz->use_redshift_dependent_M_min){
+        m_min2 = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz); }
+
+      if ( m_min2 > ptsz->M1SZ){
+        m_min = m_min2;
+      }
+      printf(" -------- m_min = %.3e\n",m_min);
+
     }
   }
 

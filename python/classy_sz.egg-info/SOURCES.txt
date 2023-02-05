@@ -1,7 +1,7 @@
 .DS_Store
 README
+autosetup.py
 cclassy.pxd
-classy.c
 classy.pyx
 extract_errors.py
 interface_generator.py

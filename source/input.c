@@ -1783,6 +1783,8 @@ int input_read_parameters(
       //mass limits: h^-1 Msun
       class_read_double("M_min",ptsz->M1SZ);
       class_read_double("M_max",ptsz->M2SZ);
+      class_read_double("M_min_2nd",ptsz->M1SZ_2nd);
+      class_read_double("M_max_2nd",ptsz->M2SZ_2nd);
       ptsz->M1SZ_dndlnM = ptsz->M1SZ;
       ptsz->M2SZ_dndlnM = ptsz->M2SZ;
       ptsz->z1SZ_dndlnM = ptsz->z1SZ;
@@ -3437,6 +3439,7 @@ int input_read_parameters(
 
 
 
+    class_read_int("has_second_M_min",ptsz->has_second_M_min);
 
      // Table 1  of MM20
      class_read_double("Redshift evolution of dust temperature",ptsz->alpha_cib);  //redshift evolution of dust temperature
@@ -6156,6 +6159,8 @@ int input_default_params(
   //mass limits: h^-1 Msun
   ptsz->M1SZ = 1.e10;
   ptsz->M2SZ = 5.e15;
+  ptsz->M1SZ_2nd = 1.e10;
+  ptsz->M2SZ_2nd = 5.e15;
 
   ptsz->n_z_dndlnM = 500;
   ptsz->n_m_dndlnM = 500;
@@ -6265,6 +6270,7 @@ int input_default_params(
 
   ptsz->id_nu_cib_to_save = 0;
   ptsz->id_nu_prime_cib_to_save = 0;
+  ptsz->has_second_M_min = 0;
 
   // Table 1  of MM20
   ptsz->alpha_cib = 0.36; //redshift evolution of dust temperature
