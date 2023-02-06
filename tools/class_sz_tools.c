@@ -10059,6 +10059,15 @@ double integrand_patterson_test(double logM, void *p){
   double m_min;
   double m_min2;
   double m_max;
+  double m_min_gal;
+  double m_max_gal;
+  double m_min_cib;
+  double m_max_cib;
+  double m_min_tSZ;
+  double m_max_tSZ;
+  double m_min_lens;
+  double m_max_lens;
+
 
   if ( ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cov_Y_N )
     || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cov_Y_N_next_order )
@@ -10072,28 +10081,89 @@ double integrand_patterson_test(double logM, void *p){
   else {
     m_min = ptsz->M1SZ;
     m_max = ptsz->M2SZ;
+    //printf(" m_min = %.3e\n",m_min);
 
-    if (ptsz->use_redshift_dependent_M_min){
-      m_min = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
-      // printf(" = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+    m_min_gal = ptsz->M1SZ_gal;
+    m_max_gal = ptsz->M2SZ_gal;
+    m_min_cib = ptsz->M1SZ_cib;
+    m_max_cib = ptsz->M2SZ_cib;
+    m_min_tSZ = ptsz->M1SZ_tSZ;
+    m_max_tSZ = ptsz->M2SZ_tSZ;
+    m_min_lens = ptsz->M1SZ_lens;
+    m_max_lens = ptsz->M2SZ_lens;
+    // printf(" m_min gal = %.3e\n",m_min_gal);
+    // printf(" m_min cib = %.3e\n",m_min_cib);
 
-    }
-    if (ptsz->has_second_M_min){
-      //printf(" = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],get_M_min_of_z(pvectsz[ptsz->index_z],ptsz));
-      //printf(" second m_min = %.3e \n",ptsz->M1SZ_2nd);
-
-      m_min2 = ptsz->M1SZ_2nd;
-
-      if (ptsz->use_redshift_dependent_M_min){
-        m_min2 = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz); }
-
-      if ( m_min2 > ptsz->M1SZ){
-        m_min = m_min2;
-      }
-      printf(" -------- m_min = %.3e\n",m_min);
-
-    }
+    // auto corr should have mass limits corresponding to specified for that tracer
+    if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_2h)){
+            m_min = m_min_cib;
+            m_max = m_max_cib;
+          //printf(" cib x cib, m_min = %.3e\n",m_min);
+         }
+     if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_gal_gal_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_gal_gal_2h)){
+             m_min = m_min_gal;
+             m_max = m_max_gal;
+             //printf(" g x g, m_min = %.3e\n",m_min);
+          }
+    // if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_tSZ_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_m_y_y_1h)){
+    //         m_min = m_min_tSZ;
+    //         m_max = m_max_tSZ;
+    //      }
+     if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_lens_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_lens_2h)){
+             m_min = m_min_lens;
+             m_max = m_max_lens;
+          }
+// cross corr 1h should have mass limits corresponding to max/min for tracer1, tracer2
+if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_gal_cib_1h)
+ { if ( m_min_gal > m_min_cib){ m_min = m_min_gal;} //M_min
+ else if ( m_min_gal <= m_min_cib){ m_min = m_min_cib;}
+ if ( m_max_gal <= m_max_cib){ m_max = m_max_gal;} //M_max
+ else if ( m_max_gal > m_max_cib){ m_max = m_max_cib;}
+//printf(" 1h gal x cib, m_min = %.3e\n",m_min);
   }
+if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_cib_1h)
+ { if ( m_min_tSZ > m_min_cib){ m_min = m_min_tSZ;} //M_min
+ else if ( m_min_tSZ <= m_min_cib){ m_min = m_min_cib;}
+ if ( m_max_tSZ <= m_max_cib){ m_max = m_max_tSZ;} //M_max
+ else if ( m_max_tSZ > m_max_cib){ m_max = m_max_cib;}
+//printf(" 1h tSZ x cib, m_min = %.3e\n",m_min);
+  }
+if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
+ { if ( m_min_gal > m_min_tSZ){ m_min = m_min_gal;} //M_min
+ else if ( m_min_gal <= m_min_tSZ){ m_min = m_min_tSZ;}
+ if ( m_max_gal <= m_max_tSZ){ m_max = m_max_gal;} //M_max
+ else if ( m_max_gal > m_max_tSZ){ m_max = m_max_tSZ;}
+//printf(" 1h gal x tSZ, m_min = %.3e\n",m_min);
+  }
+
+
+
+    // for the websky CIB only
+    if ( (ptsz->use_redshift_dependent_M_min)
+       ){
+         // for websky CIB auto only
+         if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_1h)
+            || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_2h)){
+                 m_min = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
+                 //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+              }
+
+      // 1-halo terms of the cross-corr with websky CIB (not auto) -- chose max(Mmin1, Mmin2)
+      if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_gal_cib_1h)
+         || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_lensmag_1h)
+         || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_cib_1h)
+         || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_cib_1h)
+        ){
+        m_min2 = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
+        //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min2);
+        if ( m_min2 > ptsz->M1SZ){m_min = m_min2; }
+        // printf(" = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+        }
+
+      }
+// printf("Final m_min = %.3e\n",m_min);
+}
+
 
   struct Parameters_for_integrand_patterson V;
   V.pnl = pnl;
@@ -10213,7 +10283,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('Y' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_tSZ), log(m_max_tSZ),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10224,7 +10294,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_lens), log(m_max_lens),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10241,7 +10311,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('Y' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_tSZ), log(m_max_tSZ),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10252,7 +10322,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('cib' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_cib), log(m_max_cib),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10268,8 +10338,8 @@ double integrand_patterson_test(double logM, void *p){
   V.pvectsz = pvectsz;
   params = &V;
 
-  // integrate over the whole mass range ('Y' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  // integrate over the whole mass range ('gal' part)
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10290,7 +10360,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('cib' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_cib), log(m_max_cib),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10318,7 +10388,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_lens), log(m_max_lens),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10329,7 +10399,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('cib' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_cib), log(m_max_cib),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10345,8 +10415,8 @@ double integrand_patterson_test(double logM, void *p){
      V.pvectsz = pvectsz;
      params = &V;
 
-     // integrate over the whole mass range ('Phi' part)
-     r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+     // integrate over the whole mass range ('Cib' part)
+     r_m_1=Integrate_using_Patterson_adaptive(log(m_min_cib), log(m_max_cib),
                                               epsrel, epsabs,
                                               integrand_patterson_test,
                                               params,ptsz->patterson_show_neval);
@@ -10356,8 +10426,8 @@ double integrand_patterson_test(double logM, void *p){
      params = &V;
 
 
-     // integrate over the whole mass range ('cib' part)
-     r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+     // integrate over the whole mass range ('phi'/gal part)
+     r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                               epsrel, epsabs,
                                               integrand_patterson_test,
                                               params,ptsz->patterson_show_neval);
@@ -10374,7 +10444,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate for frequency nu
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_cib), log(m_max_cib),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10385,7 +10455,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate for frequency nu_prime
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_cib), log(m_max_cib),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10403,7 +10473,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('Y' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_tSZ), log(m_max_tSZ),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10424,7 +10494,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('galaxy' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10452,8 +10522,8 @@ double integrand_patterson_test(double logM, void *p){
   V.pvectsz = pvectsz;
   params = &V;
 
-  // integrate over the whole mass range ('Y' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  // integrate over the whole mass range ('gal' part)
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10499,7 +10569,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('Y' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_tSZ), log(m_max_tSZ),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10520,7 +10590,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('galaxy' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10549,7 +10619,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('gal' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10569,8 +10639,8 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
 
-  // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  // integrate over the whole mass range ('Gal/Phi' part)
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10602,7 +10672,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('gal' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10624,7 +10694,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_lens), log(m_max_lens),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10654,8 +10724,8 @@ double integrand_patterson_test(double logM, void *p){
   V.pvectsz = pvectsz;
   params = &V;
 
-  // integrate over the whole mass range ('gal' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  // integrate over the whole mass range ('gal1' part)
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10676,8 +10746,8 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
 
-  // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  // integrate over the whole mass range ('Gal2' part)
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10708,7 +10778,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('gal' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10730,7 +10800,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10761,7 +10831,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('gal' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10783,7 +10853,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10814,7 +10884,7 @@ double integrand_patterson_test(double logM, void *p){
   params = &V;
 
   // integrate over the whole mass range ('gal' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10836,7 +10906,7 @@ double integrand_patterson_test(double logM, void *p){
 
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);

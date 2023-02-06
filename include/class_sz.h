@@ -1284,7 +1284,14 @@ struct tszspectrum {
   double M1SZ_2nd;
   double M2SZ_2nd;
 
-  // double z1SZ_L_sat;
+  double M1SZ_gal;
+  double M2SZ_gal;
+  double M1SZ_cib;
+  double M2SZ_cib;
+  double M1SZ_tSZ;
+  double M2SZ_tSZ;
+  double M1SZ_lens;
+  double M2SZ_lens;  // double z1SZ_L_sat;
   // double z2SZ_L_sat;
   //
   // double M1SZ_L_sat;
