@@ -10081,7 +10081,6 @@ double integrand_patterson_test(double logM, void *p){
   else {
     m_min = ptsz->M1SZ;
     m_max = ptsz->M2SZ;
-    //printf(" m_min = %.3e\n",m_min);
 
     m_min_gal = ptsz->M1SZ_gal;
     m_max_gal = ptsz->M2SZ_gal;
@@ -10105,34 +10104,30 @@ double integrand_patterson_test(double logM, void *p){
              m_max = m_max_gal;
              //printf(" g x g, m_min = %.3e\n",m_min);
           }
-    // if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_tSZ_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_m_y_y_1h)){
-    //         m_min = m_min_tSZ;
-    //         m_max = m_max_tSZ;
-    //      }
+    if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_m_y_y_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_2halo) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_sz_ps)){ //these are weird sz 1h and 2h indices
+            m_min = m_min_tSZ;
+            m_max = m_max_tSZ;
+            printf("tSZ, m_min = %.3e\n",m_min);
+         }
      if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_lens_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_lens_2h)){
              m_min = m_min_lens;
              m_max = m_max_lens;
           }
+
 // cross corr 1h should have mass limits corresponding to max/min for tracer1, tracer2
 if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_gal_cib_1h)
- { if ( m_min_gal > m_min_cib){ m_min = m_min_gal;} //M_min
- else if ( m_min_gal <= m_min_cib){ m_min = m_min_cib;}
- if ( m_max_gal <= m_max_cib){ m_max = m_max_gal;} //M_max
- else if ( m_max_gal > m_max_cib){ m_max = m_max_cib;}
+ { m_min = r8_max(m_min_gal,m_min_cib);
+   m_max = r8_min(m_max_gal,m_max_cib);
 //printf(" 1h gal x cib, m_min = %.3e\n",m_min);
   }
 if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_cib_1h)
- { if ( m_min_tSZ > m_min_cib){ m_min = m_min_tSZ;} //M_min
- else if ( m_min_tSZ <= m_min_cib){ m_min = m_min_cib;}
- if ( m_max_tSZ <= m_max_cib){ m_max = m_max_tSZ;} //M_max
- else if ( m_max_tSZ > m_max_cib){ m_max = m_max_cib;}
+ { m_min = r8_max(m_min_tSZ,m_min_cib);
+   m_max = r8_min(m_max_tSZ,m_max_cib);
 //printf(" 1h tSZ x cib, m_min = %.3e\n",m_min);
   }
 if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
- { if ( m_min_gal > m_min_tSZ){ m_min = m_min_gal;} //M_min
- else if ( m_min_gal <= m_min_tSZ){ m_min = m_min_tSZ;}
- if ( m_max_gal <= m_max_tSZ){ m_max = m_max_gal;} //M_max
- else if ( m_max_gal > m_max_tSZ){ m_max = m_max_tSZ;}
+ { m_min = r8_max(m_min_gal,m_min_tSZ);
+   m_max = r8_min(m_max_gal,m_max_tSZ);
 //printf(" 1h gal x tSZ, m_min = %.3e\n",m_min);
   }
 
@@ -10161,7 +10156,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
         }
 
       }
-// printf("Final m_min = %.3e\n",m_min);
+ //printf("Final m_min = %.3e\n",m_min);
 }
 
 
@@ -10344,7 +10339,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
 
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_gal == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10364,7 +10359,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_cib == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10478,7 +10473,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
 
- if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+ if (m_min_tSZ == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10499,7 +10494,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
 
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_gal == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10527,7 +10522,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
- if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+ if (m_min_gal == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10574,7 +10569,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
 
- if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+ if (m_min_tSZ == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10589,8 +10584,8 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
   params = &V;
 
 
-  // integrate over the whole mass range ('galaxy' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
+  // integrate over the whole mass range ('Phi' part)
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10624,7 +10619,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
 
- if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+ if (m_min_gal == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10639,8 +10634,8 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
   params = &V;
 
 
-  // integrate over the whole mass range ('Gal/Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
+  // integrate over the whole mass range ('Phi' part)
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10678,7 +10673,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            params,ptsz->patterson_show_neval);
 
 
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_gal == ptsz->m_min_counter_terms)  {
      double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
      double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
      double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10699,7 +10694,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
 
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_lens == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10731,7 +10726,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            params,ptsz->patterson_show_neval);
 
 
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_gal == ptsz->m_min_counter_terms)  {
      double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
      double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
      double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10752,7 +10747,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
 
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_gal == ptsz->m_min_counter_terms)  {
    double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
    double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
    double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10778,7 +10773,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
   params = &V;
 
   // integrate over the whole mass range ('gal' part)
-  r_m_1=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
+  r_m_1=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10800,7 +10795,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
 
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10837,7 +10832,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            params,ptsz->patterson_show_neval);
 
 
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_gal == ptsz->m_min_counter_terms)  {
      double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
      double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
      double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10853,7 +10848,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
 
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -10890,7 +10885,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
                                            params,ptsz->patterson_show_neval);
 
 
-   if (ptsz->M1SZ == ptsz->m_min_counter_terms)  {
+   if (m_min_gal == ptsz->m_min_counter_terms)  {
      double nmin = get_hmf_counter_term_nmin_at_z(pvectsz[ptsz->index_z],ptsz);
      double bmin = get_hmf_counter_term_b1min_at_z(pvectsz[ptsz->index_z],ptsz)*nmin;
      double I0 = integrand_patterson_test(log(ptsz->m_min_counter_terms),params);
@@ -10906,7 +10901,7 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
 
 
   // integrate over the whole mass range ('Phi' part)
-  r_m_2=Integrate_using_Patterson_adaptive(log(m_min_gal), log(m_max_gal),
+  r_m_2=Integrate_using_Patterson_adaptive(log(m_min), log(m_max),
                                            epsrel, epsabs,
                                            integrand_patterson_test,
                                            params,ptsz->patterson_show_neval);
@@ -14398,9 +14393,18 @@ double m_min,m_max;
 //   m_max = 1e16; // this has to be the same as the maximal mass at which the counter terms are tabulated
 // }
 // else{
+
+// }
+//OK
+if (ptsz->M1SZ_gal
+|| ptsz->M2SZ_gal){
+  m_min = ptsz->M1SZ_gal;
+  m_max = ptsz->M2SZ_gal;
+}
+else{
 m_min = ptsz->M_min_ng_bar;
 m_max = ptsz->M_max_ng_bar;
-// }
+}
 
 double * pvecback;
 double * pvectsz;
@@ -14486,9 +14490,19 @@ double m_min,m_max;
 //   m_max = 1e16; // this has to be the same as the maximal mass at which the counter terms are tabulated
 // }
 // else{
+// m_min = ptsz->M_min_ng_bar;
+// m_max = ptsz->M_max_ng_bar;
+// }
+//OK
+if (ptsz->M1SZ_gal
+|| ptsz->M2SZ_gal){
+  m_min = ptsz->M1SZ_gal;
+  m_max = ptsz->M2SZ_gal;
+}
+else{
 m_min = ptsz->M_min_ng_bar;
 m_max = ptsz->M_max_ng_bar;
-// }
+}
 
 double * pvecback;
 double * pvectsz;
@@ -14573,9 +14587,19 @@ double m_min,m_max;
 //   m_max = 1e16; // this has to be the same as the maximal mass at which the counter terms are tabulated
 // }
 // else{
+// m_min = ptsz->M_min_ng_bar;
+// m_max = ptsz->M_max_ng_bar;
+// }
+ //OK
+if (ptsz->M1SZ_gal
+|| ptsz->M2SZ_gal){
+  m_min = ptsz->M1SZ_gal;
+  m_max = ptsz->M2SZ_gal;
+}
+else{
 m_min = ptsz->M_min_ng_bar;
 m_max = ptsz->M_max_ng_bar;
-// }
+}
 
 double * pvecback;
 double * pvectsz;
@@ -14664,6 +14688,14 @@ if (ptsz->hm_consistency == 0){
 else{
 m_min = ptsz->M1SZ;
 m_max = ptsz->M2SZ;
+printf("--------------------- outside m_min tabulate_mean_galaxy_bias = %.8e\n",m_min);
+if(ptsz->M1SZ_gal){
+  m_min = ptsz->M1SZ_gal;
+  printf("--------------------- inside m_min tabulate_mean_galaxy_bias = %.8e\n",m_min);
+  }
+if(ptsz->M2SZ_gal){
+  m_min = ptsz->M2SZ_gal;
+  }
 }
 
 double * pvecback;
@@ -17924,8 +17956,8 @@ for (index_nu=0;index_nu<ptsz->n_nu_L_sat;index_nu++){
 
   double z_min = r8_min(ptsz->z1SZ,ptsz->z1SZ_L_sat);
   double z_max = r8_max(ptsz->z2SZ,ptsz->z2SZ_L_sat);
-  double logM_min = r8_min(log(ptsz->M1SZ/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
-  double logM_max = r8_max(log(ptsz->M2SZ/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
+  double logM_min = r8_min(log(ptsz->M1SZ_cib/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
+  double logM_max = r8_max(log(ptsz->M2SZ_cib/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
 //
 // if (
 //       ptsz->has_tSZ_cib_1h
@@ -18136,8 +18168,8 @@ int tabulate_L_sat_at_nu_and_nu_prime(struct background * pba,
   int abort;
 
   //Array of M in Msun
-  double logM_min = r8_min(log(ptsz->M1SZ/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
-  double logM_max = r8_max(log(ptsz->M2SZ/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
+  double logM_min = r8_min(log(ptsz->M1SZ_cib/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
+  double logM_max = r8_max(log(ptsz->M2SZ_cib/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
   int index_M;
 
   int index_z_M = 0;

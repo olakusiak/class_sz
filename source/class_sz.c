@@ -16396,7 +16396,7 @@ double result = 0.;
 double L_gal = evaluate_galaxy_luminosity(z, M_halo, nu, ptsz);
 double nc;
 // nc = HOD_mean_number_of_central_galaxies(z,M_halo,ptsz->M_min_HOD,ptsz->sigma_log10M_HOD,pvectsz,ptsz,pba);
-if (M_halo>=ptsz->M_min_HOD) nc = 1.;
+if (M_halo>=ptsz->M_min_HOD_cib) nc = 1.;
 else nc = 0.;
 
 if (ptsz->use_nc_1_for_all_halos_cib_HOD == 1){
