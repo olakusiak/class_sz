@@ -10093,6 +10093,12 @@ double integrand_patterson_test(double logM, void *p){
     // printf(" m_min gal = %.3e\n",m_min_gal);
     // printf(" m_min cib = %.3e\n",m_min_cib);
 
+// special websky CIB case
+    if (ptsz->use_redshift_dependent_M_min){
+      m_min_cib = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
+      //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+    }
+
     // auto corr should have mass limits corresponding to specified for that tracer
     if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_2h)){
             m_min = m_min_cib;
@@ -10107,7 +10113,7 @@ double integrand_patterson_test(double logM, void *p){
     if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_m_y_y_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_2halo) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_sz_ps)){ //these are weird sz 1h and 2h indices
             m_min = m_min_tSZ;
             m_max = m_max_tSZ;
-            printf("tSZ, m_min = %.3e\n",m_min);
+            //printf("tSZ, m_min = %.3e\n",m_min);
          }
      if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_lens_1h) || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_lens_2h)){
              m_min = m_min_lens;
@@ -10133,29 +10139,29 @@ if ( (int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_gal_1h)
 
 
 
-    // for the websky CIB only
-    if ( (ptsz->use_redshift_dependent_M_min)
-       ){
-         // for websky CIB auto only
-         if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_1h)
-            || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_2h)){
-                 m_min = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
-                 //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
-              }
-
-      // 1-halo terms of the cross-corr with websky CIB (not auto) -- chose max(Mmin1, Mmin2)
-      if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_gal_cib_1h)
-         || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_lensmag_1h)
-         || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_cib_1h)
-         || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_cib_1h)
-        ){
-        m_min2 = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
-        //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min2);
-        if ( m_min2 > ptsz->M1SZ){m_min = m_min2; }
-        // printf(" = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
-        }
-
-      }
+    // // for the websky CIB only
+    // if ( (ptsz->use_redshift_dependent_M_min)
+    //    ){
+    //      // for websky CIB auto only
+    //      if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_1h)
+    //         || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_cib_2h)){
+    //              m_min = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
+    //              //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+    //           }
+    //
+    //   // 1-halo terms of the cross-corr with websky CIB (not auto) -- chose max(Mmin1, Mmin2)
+    //   if (((int) pvectsz[ptsz->index_md] == ptsz->index_md_gal_cib_1h)
+    //      || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_cib_lensmag_1h)
+    //      || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_tSZ_cib_1h)
+    //      || ((int) pvectsz[ptsz->index_md] == ptsz->index_md_lens_cib_1h)
+    //     ){
+    //     m_min2 = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz);
+    //     //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min2);
+    //     if ( m_min2 > ptsz->M1SZ){m_min = m_min2; }
+    //     // printf(" = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+    //     }
+    //
+    //   }
  //printf("Final m_min = %.3e\n",m_min);
 }
 
@@ -17910,7 +17916,8 @@ double integrand_patterson_L_sat(double lnM_sub, void *p){
 }
 
 
-int tabulate_L_sat_at_z_m_nu(struct background * pba,
+int tabulate_L_sat_at_z_m_nu(
+                            struct background * pba,
                              struct tszspectrum * ptsz){
 
 if (
@@ -17954,10 +17961,30 @@ for (index_nu=0;index_nu<ptsz->n_nu_L_sat;index_nu++){
 
 }
 
+double * pvecback;
+double * pvectsz;
+double m_min_cib;
+double m_max_cib;
+
+m_min_cib = ptsz->M1SZ_cib;
+m_max_cib = ptsz->M2SZ_cib;
+// special websky CIB case
+    if (ptsz->use_redshift_dependent_M_min){
+      m_min_cib = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz); //in Msun/h
+      //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+    }
+
+
   double z_min = r8_min(ptsz->z1SZ,ptsz->z1SZ_L_sat);
   double z_max = r8_max(ptsz->z2SZ,ptsz->z2SZ_L_sat);
-  double logM_min = r8_min(log(ptsz->M1SZ_cib/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
-  double logM_max = r8_max(log(ptsz->M2SZ_cib/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
+  //OK
+  // double logM_min = log(m_min_cib/pba->h);//in Msun
+  // double logM_max = log(m_max_cib/pba->h);//in Msun
+  double logM_min = r8_min(log(m_min_cib/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
+  double logM_max = r8_max(log(m_max_cib/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
+
+  // double logM_min = r8_min(log(ptsz->M1SZ/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
+//  double logM_max = r8_max(log(ptsz->M2SZ/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
 //
 // if (
 //       ptsz->has_tSZ_cib_1h
@@ -18004,8 +18031,6 @@ for (index_M=0; index_M<ptsz->n_m_L_sat; index_M++)
 
 double r;
 
-double * pvecback;
-double * pvectsz;
 
 double tstart, tstop;
 int abort;
@@ -18141,19 +18166,9 @@ return _SUCCESS_;
 int tabulate_L_sat_at_nu_and_nu_prime(struct background * pba,
                                       struct tszspectrum * ptsz){
 
-// if (
-//       ptsz->has_tSZ_cib_1h
-//     + ptsz->has_tSZ_cib_2h
-//     + ptsz->has_cib_cib_1h
-//     // + ptsz->has_cib_monopole
-//     + ptsz->has_cib_cib_2h
-//     + ptsz->has_lens_cib_1h
-//     + ptsz->has_lens_cib_2h
-//     + ptsz->has_gal_cib_1h
-//     + ptsz->has_gal_cib_2h
-//     == _FALSE_
-//     )
-// return 0;
+
+  double * pvecback;
+  double * pvectsz;
 
   //Array of z
   double z_min = r8_min(ptsz->z1SZ,ptsz->z1SZ_L_sat);
@@ -18167,9 +18182,22 @@ int tabulate_L_sat_at_nu_and_nu_prime(struct background * pba,
   // double * pvectsz;
   int abort;
 
+  double m_min_cib;
+  double m_max_cib;
+  m_min_cib = ptsz->M1SZ_cib;
+  m_max_cib = ptsz->M2SZ_cib;
+  // special websky CIB case
+      if (ptsz->use_redshift_dependent_M_min){
+        m_min_cib = get_M_min_of_z(pvectsz[ptsz->index_z],ptsz); //in Msun/h
+        //printf("Websky: z = %.3e m_min = %.3e\n",pvectsz[ptsz->index_z],m_min);
+      }
+
   //Array of M in Msun
-  double logM_min = r8_min(log(ptsz->M1SZ_cib/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
-  double logM_max = r8_max(log(ptsz->M2SZ_cib/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
+  //OK
+  double logM_min = r8_min(log(m_min_cib/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
+  double logM_max = r8_max(log(m_max_cib/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
+  //double logM_min = r8_min(log(ptsz->M1SZ_cib/pba->h),log(ptsz->M1SZ_L_sat)); //in Msun
+  //double logM_max = r8_max(log(ptsz->M2SZ_cib/pba->h),log(ptsz->M2SZ_L_sat)); //in Msun
   int index_M;
 
   int index_z_M = 0;
