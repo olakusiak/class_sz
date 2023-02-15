@@ -4546,7 +4546,7 @@ ptsz->cl_tSZ_cib_2h[index_cib1][index_l] = Pvectsz[ptsz->index_integral]
                                             *ptsz->ell[index_l]*(ptsz->ell[index_l]+1.)
                                             /(2*_PI_)
                                             /pow(ptsz->Tcmb_gNU,1);
-printf("ell = %.3e and cl_yg = %.3e\n",ptsz->ell[index_l],ptsz->cl_tSZ_cib_1h[index_l]);
+//printf("ell = %.3e and cl_yg = %.3e\n",ptsz->ell[index_l],ptsz->cl_tSZ_cib_1h[index_l]);
 
 }
 
