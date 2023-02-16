@@ -1,11 +1,11 @@
 .DS_Store
 README
 cclassy.pxd
+classy.c
 classy.pyx
 extract_errors.py
 interface_generator.py
 setup.py
-sshproxy.sh
 test_class.py
 /Users/aleksandra/software/class_sz/python/../python/classy.c
 classy_sz.egg-info/PKG-INFO
